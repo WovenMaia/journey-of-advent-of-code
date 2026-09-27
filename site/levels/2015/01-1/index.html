@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Maïa's journal and interactive running-sum visualisation for Advent of Code 2015 Day 1 Part 1.">
+  <meta name="theme-color" content="oklch(0.98 0.008 294)">
+  <title>2015 Day 1 Part 1 | Journey of Advent of Code</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "DejaVu Sans", sans-serif;
+      --serif: "Iowan Old Style", Charter, Georgia, "Noto Serif", serif;
+      --mono: ui-monospace, "SF Mono", "JetBrains Mono", "DejaVu Sans Mono", monospace;
+      --bg: oklch(0.98 0.008 294);
+      --panel: oklch(1 0 0);
+      --ink: oklch(0.20 0.025 294);
+      --dim: oklch(0.43 0.025 294);
+      --line: oklch(0.88 0.018 294);
+      --subject: oklch(0.47 0.15 294);
+      --subject-deep: oklch(0.31 0.11 294);
+      --subject-dark: oklch(0.22 0.075 294);
+      --subject-soft: oklch(0.93 0.035 294);
+      --state: oklch(0.48 0.12 151);
+      --state-soft: oklch(0.94 0.04 151);
+      --danger: oklch(0.46 0.15 29);
+      --s1: 2px; --s2: 4px; --s3: 8px; --s4: 12px; --s5: 16px; --s6: 24px;
+      --s7: 32px; --s8: 40px; --s9: 48px; --s10: 64px; --s11: 80px;
+      --r1: 4px; --r2: 8px; --r3: 16px;
+      --shadow: 0 0 0 1px oklch(0.20 0.025 294 / .06), 0 2px 8px oklch(0.31 0.11 294 / .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body {
+      margin: 0; min-width: 0; background: var(--bg); color: var(--ink);
+      font: 400 16px/1.55 var(--sans);
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    a { color: inherit; }
+    button, input, textarea { font: inherit; }
+    button, a, input[type="range"] { -webkit-tap-highlight-color: transparent; }
+    h1, h2, h3 { margin: 0; font-family: var(--serif); line-height: 1.14; text-wrap: balance; }
+    p, li, figcaption { text-wrap: pretty; }
+    code, pre, .mono { font-family: var(--mono); }
+    :focus-visible { outline: 3px solid var(--subject); outline-offset: 3px; }
+    .topbar {
+      min-height: 64px; display: flex; align-items: center; justify-content: space-between; gap: var(--s5);
+      padding: var(--s3) max(var(--s6), env(safe-area-inset-left)); border-bottom: 1px solid var(--line);
+      background: oklch(0.98 0.008 294 / .94); position: sticky; top: 0; z-index: 10;
+    }
+    .back { min-height: 44px; display: inline-flex; align-items: center; gap: var(--s3); font-weight: 750; text-decoration: none; }
+    .back svg { flex: none; }
+    .level-id { color: var(--dim); font: 700 12px/1 var(--mono); }
+    .shell {
+      width: min(100%, 1180px); margin: 0 auto; padding: var(--s6); display: grid;
+      grid-template-columns: minmax(0, 176px) minmax(0, 1fr); gap: var(--s6); align-items: start;
+    }
+    .rail { position: sticky; top: 88px; max-height: calc(100dvh - 112px); overflow-y: auto; padding: var(--s4) 0; }
+    .rail-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); margin-bottom: var(--s5); }
+    .rail-title { color: var(--dim); font: 700 12px/1 var(--mono); }
+    .rail-toggle {
+      width: 44px; height: 44px; border: 0; border-radius: var(--r2); color: var(--subject-deep);
+      background: var(--subject-soft); cursor: pointer; transition: transform 160ms cubic-bezier(.23,1,.32,1);
+    }
+    .rail-toggle:active, button:active, .button:active { transform: scale(.97); }
+    .rail nav { display: grid; gap: var(--s2); }
+    .rail nav a { min-height: 44px; display: flex; align-items: center; padding: var(--s3) var(--s4); border-radius: var(--r2); color: var(--dim); text-decoration: none; font-weight: 650; }
+    .rail nav a[aria-current="true"] { color: var(--subject-deep); background: var(--subject-soft); }
+    .shell.toc-collapsed { grid-template-columns: minmax(0, 1fr); }
+    .shell.toc-collapsed > .rail { display: none; }
+    .restore-toc {
+      display: none; position: fixed; left: max(var(--s4), env(safe-area-inset-left)); bottom: max(var(--s4), env(safe-area-inset-bottom));
+      z-index: 10; min-height: 44px; padding: 0 var(--s5); border: 0; border-radius: var(--r2);
+      color: oklch(1 0 0); background: var(--subject-deep); box-shadow: var(--shadow); font-weight: 700; cursor: pointer;
+    }
+    .shell.toc-collapsed + .restore-toc { display: block; }
+    main { min-width: 0; }
+    section { scroll-margin-top: 88px; }
+    .hero {
+      min-height: 230px; padding: var(--s7) var(--s8); border-radius: var(--r3); background: var(--subject-deep);
+      color: oklch(0.98 0.008 294); display: flex; flex-direction: column; justify-content: space-between; gap: var(--s6); position: relative; overflow: clip;
+    }
+    .hero::after { content: ")"; position: absolute; right: var(--s7); top: -44px; color: oklch(0.68 0.10 294 / .20); font: 700 250px/1 var(--mono); }
+    .crumb { position: relative; z-index: 1; color: oklch(0.82 0.04 294); font: 700 13px/1.2 var(--mono); }
+    .hero h1 { position: relative; z-index: 1; max-width: 16ch; font-size: clamp(36px, 5.5vw, 60px); letter-spacing: -.035em; }
+    .hero-footer { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: var(--s5); }
+    .hero-footer p { max-width: 51ch; margin: 0; color: oklch(0.88 0.025 294); }
+    .status { min-height: 38px; display: inline-flex; align-items: center; gap: var(--s3); padding: 0 var(--s4); border-radius: 999px; background: oklch(0.43 0.14 294); font: 700 13px/1 var(--mono); white-space: nowrap; }
+    .status::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: oklch(0.79 0.12 294); }
+    .tldr { margin: var(--s5) 0 var(--s6); padding: var(--s5) var(--s6); border-radius: var(--r2); background: var(--panel); box-shadow: var(--shadow); }
+    .tldr p { max-width: 68ch; margin: 0; }
+    .inline-jumps { display: none; gap: var(--s3); overflow-x: auto; margin: 0 0 var(--s5); padding: var(--s2) 0; }
+    .inline-jumps a { min-height: 44px; display: inline-flex; align-items: center; padding: 0 var(--s4); border-radius: var(--r2); background: var(--subject-soft); text-decoration: none; white-space: nowrap; font-weight: 700; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: var(--s5); margin: var(--s8) 0 var(--s5); }
+    .section-head h2 { font-size: clamp(30px, 4vw, 44px); letter-spacing: -.025em; }
+    .section-head p { max-width: 40ch; margin: 0; color: var(--dim); }
+    .lab {
+      min-height: 480px; display: grid; grid-template-columns: minmax(270px, .9fr) minmax(300px, 1.1fr);
+      border-radius: var(--r3); overflow: clip; background: var(--subject-dark); color: oklch(0.98 0.008 294);
+      box-shadow: 0 12px 32px oklch(0.31 0.11 294 / .16);
+    }
+    .controls { padding: var(--s6); display: flex; flex-direction: column; gap: var(--s5); background: var(--subject-deep); }
+    .controls label { font-weight: 750; }
+    textarea {
+      width: 100%; min-height: 86px; resize: vertical; padding: var(--s4); border: 2px solid oklch(0.65 0.07 294);
+      border-radius: var(--r2); background: oklch(0.24 0.07 294); color: oklch(0.98 0.008 294); font: 700 18px/1.5 var(--mono);
+    }
+    textarea::placeholder { color: oklch(0.78 0.035 294); opacity: 1; }
+    textarea[aria-invalid="true"] { border-color: oklch(0.74 0.16 29); }
+    .error { min-height: 24px; margin: calc(var(--s3) * -1) 0 0; color: oklch(0.84 0.10 29); font-size: 14px; }
+    .counter-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s3); }
+    .readout { padding: var(--s4); border-radius: var(--r2); background: oklch(0.38 0.11 294); }
+    .readout span { display: block; color: oklch(0.78 0.035 294); font-size: 12px; font-weight: 750; }
+    .readout strong { display: block; margin-top: var(--s2); font: 750 30px/1 var(--mono); font-variant-numeric: tabular-nums; }
+    .transport { display: flex; flex-wrap: wrap; gap: var(--s3); }
+    .control-button, .button {
+      min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: var(--s3);
+      padding: 0 var(--s4); border: 0; border-radius: var(--r2); color: var(--subject-deep); background: oklch(0.96 0.012 294);
+      font-weight: 750; cursor: pointer; text-decoration: none; transition: transform 160ms cubic-bezier(.23,1,.32,1), background-color 160ms ease;
+    }
+    .control-button.primary { color: var(--subject-deep); background: oklch(0.79 0.12 294); }
+    .control-button:disabled { opacity: .45; cursor: not-allowed; }
+    .control-button svg { flex: none; }
+    .scrubber { display: grid; gap: var(--s3); }
+    .scrubber label { display: flex; justify-content: space-between; gap: var(--s4); font-size: 14px; }
+    input[type="range"] { width: 100%; min-height: 44px; accent-color: oklch(0.79 0.12 294); cursor: pointer; }
+    .sequence { display: flex; flex-wrap: wrap; gap: var(--s2); min-height: 42px; align-content: start; }
+    .token { width: 32px; height: 32px; display: grid; place-items: center; border-radius: var(--r1); color: oklch(0.78 0.035 294); background: oklch(0.25 0.07 294); font: 750 16px/1 var(--mono); }
+    .token.done { color: var(--subject-deep); background: oklch(0.79 0.12 294); }
+    .token.current { box-shadow: 0 0 0 2px oklch(0.98 0.008 294); }
+    .shaft-wrap { min-width: 0; padding: var(--s6); display: grid; grid-template-rows: auto 1fr auto; gap: var(--s4); }
+    .shaft-title { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s4); }
+    .shaft-title h3 { font-size: 24px; }
+    .shaft-title span { color: oklch(0.75 0.035 294); font: 650 12px/1 var(--mono); }
+    .shaft { min-height: 310px; display: grid; align-content: stretch; border-top: 1px solid oklch(0.43 0.07 294); border-bottom: 1px solid oklch(0.43 0.07 294); }
+    .floor-row { min-height: 42px; display: grid; grid-template-columns: 48px minmax(0, 1fr); align-items: center; border-bottom: 1px solid oklch(0.34 0.055 294); }
+    .floor-row:last-child { border-bottom: 0; }
+    .floor-label { color: oklch(0.69 0.03 294); font: 650 12px/1 var(--mono); font-variant-numeric: tabular-nums; }
+    .floor-track { height: 8px; border-radius: 999px; background: oklch(0.30 0.05 294); position: relative; }
+    .floor-row.active .floor-track { background: oklch(0.51 0.12 294); }
+    .car { width: 48px; height: 34px; display: grid; place-items: center; border-radius: var(--r1); color: var(--subject-deep); background: oklch(0.83 0.11 294); font: 800 16px/1 var(--mono); box-shadow: 0 0 0 4px oklch(0.83 0.11 294 / .15); }
+    .formula { margin: 0; color: oklch(0.81 0.035 294); font: 650 14px/1.5 var(--mono); }
+    figcaption { padding: var(--s4) var(--s5); border-radius: var(--r2); background: var(--subject-soft); color: var(--subject-deep); }
+    .state-tools { margin-top: auto; display: flex; flex-wrap: wrap; gap: var(--s3); padding-top: var(--s3); border-top: 1px solid oklch(0.48 0.08 294); }
+    .state-tools .control-button { background: oklch(0.38 0.11 294); color: oklch(0.94 0.012 294); font-size: 13px; }
+    .state-tools input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .journal-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(250px, .65fr); gap: var(--s8); margin-bottom: var(--s8); }
+    .journal-copy { max-width: 68ch; }
+    .journal-copy h3 { margin: var(--s7) 0 var(--s3); font-size: 24px; }
+    .journal-copy p { margin: 0 0 var(--s5); }
+    .concept { align-self: start; padding: var(--s6); border-radius: var(--r3); background: var(--subject-soft); color: var(--subject-deep); }
+    .concept h3 { font-size: 24px; }
+    .trace { margin: var(--s5) 0; padding: var(--s4); border-radius: var(--r2); background: var(--panel); font: 700 15px/1.6 var(--mono); overflow-wrap: anywhere; }
+    .complexity { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s3); }
+    .complexity div { padding: var(--s4); border-radius: var(--r2); background: var(--panel); }
+    .complexity span { display: block; color: var(--dim); font-size: 13px; }
+    .complexity strong { font: 750 20px/1.3 var(--mono); }
+    .synthesis { margin: var(--s7) 0 var(--s10); padding: var(--s5) var(--s6); border-radius: var(--r2); background: var(--state-soft); color: oklch(0.31 0.09 151); }
+    .synthesis strong { display: block; margin-bottom: var(--s2); font: 750 13px/1.2 var(--mono); }
+    .next { display: grid; grid-template-columns: auto 1fr; gap: var(--s5); align-items: center; margin-bottom: var(--s10); padding: var(--s6); border-radius: var(--r3); color: oklch(0.98 0.008 294); background: var(--subject-deep); }
+    .lock { width: 52px; height: 52px; display: grid; place-items: center; border-radius: var(--r2); background: oklch(0.40 0.12 294); }
+    .next h2 { font-size: 24px; }
+    .next p { margin: var(--s2) 0 0; color: oklch(0.84 0.025 294); }
+    footer { padding: var(--s7) 0 var(--s5); border-top: 1px solid var(--line); color: var(--dim); }
+    footer a { min-height: 44px; display: inline-flex; align-items: center; }
+    .noscript { margin: var(--s4); padding: var(--s4); border-radius: var(--r2); background: oklch(0.94 0.04 151); color: oklch(0.31 0.09 151); }
+    @media (pointer: coarse) and (orientation: portrait) and (aspect-ratio < 3 / 4) {
+      .shell { display: block; padding: var(--s4); }
+      .rail { display: none; }
+      .inline-jumps { display: flex; }
+      .hero { padding: var(--s6); }
+      .hero h1 { font-size: 40px; }
+      .hero-footer { align-items: start; flex-direction: column; }
+      .lab { grid-template-columns: 1fr; }
+      .shaft-wrap { min-height: 470px; }
+      .journal-grid { grid-template-columns: 1fr; }
+    }
+    @media (pointer: coarse) and (orientation: portrait) and (aspect-ratio >= 3 / 4),
+           (pointer: coarse) and (orientation: landscape) and (aspect-ratio <= 3 / 2),
+           (pointer: fine) {
+      .shell { grid-template-columns: minmax(0, 176px) minmax(0, 1fr); align-items: start; }
+      .shell.toc-collapsed { grid-template-columns: minmax(0, 1fr); }
+    }
+    @media (pointer: coarse) and (orientation: landscape) and (aspect-ratio > 3 / 2) {
+      .shell { grid-template-columns: minmax(0, 1fr); }
+      .rail { display: none; }
+      .inline-jumps { display: flex; }
+      .hero { min-height: 210px; }
+    }
+    @media (max-width: 720px) {
+      .lab, .journal-grid { grid-template-columns: 1fr; }
+      .section-head { align-items: start; flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition-duration: 0.01ms !important; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="back" href="../../../index.html">
+      <svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18"><path d="m10.5 4-5 5 5 5M6 9h7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Journey map
+    </a>
+    <span class="level-id">2015 / 01-1</span>
+  </header>
+  <div class="shell" id="shell">
+    <aside class="rail" aria-label="Level navigation">
+      <div class="rail-head"><span class="rail-title">THIS LEVEL</span><button class="rail-toggle" id="collapse-toc" type="button" aria-label="Collapse level navigation" aria-expanded="true"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18"><path d="M11.5 4 6.5 9l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+      <nav><a href="#top" aria-current="true">Threshold</a><a href="#lab">Running sum lab</a><a href="#journal">Journal</a><a href="#next">Next door</a></nav>
+    </aside>
+    <main id="top">
+      <nav class="inline-jumps" aria-label="Page sections"><a href="#top">Threshold</a><a href="#lab">Lab</a><a href="#journal">Journal</a><a href="#next">Next</a></nav>
+      <section class="hero" aria-labelledby="page-title">
+        <span class="crumb">DAY 01 / PART 1 / STAGED</span>
+        <h1 id="page-title">Follow the floor, one symbol at a time.</h1>
+        <div class="hero-footer"><p>A tiny stream becomes a running sum. The trace is the algorithm made visible.</p><span class="status">STAGED</span></div>
+      </section>
+      <div class="tldr"><p><strong>The idea:</strong> start at floor zero, add one for every opening parenthesis, subtract one for every closing parenthesis, and keep the last running total. Python makes that fold direct; the real input is still pending.</p></div>
+
+      <section id="lab" aria-labelledby="lab-title">
+        <div class="section-head"><h2 id="lab-title">Running sum lab</h2><p>Edit the stream, move through it, and watch one accumulator carry the whole computation.</p></div>
+        <figure data-figure="running-floor" data-figure-label="Running floor scan" data-figure-state="input=7;position=0;floor=0">
+          <div class="lab">
+            <div class="controls">
+              <label for="instructions">Instruction stream</label>
+              <textarea id="instructions" rows="3" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="input-help input-error">(()(()(</textarea>
+              <span id="input-help" class="mono">Use only ( and ). Spaces are ignored.</span>
+              <p class="error" id="input-error" role="alert" aria-live="polite"></p>
+              <div class="counter-row" aria-live="polite">
+                <div class="readout"><span>POSITION</span><strong id="position">0 / 7</strong></div>
+                <div class="readout"><span>FLOOR</span><strong id="floor">0</strong></div>
+              </div>
+              <div class="transport" aria-label="Playback controls">
+                <button class="control-button" id="previous" type="button" aria-label="Step backward"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18"><path d="M5 4v10M14 4 7 9l7 5Z" fill="currentColor"/></svg></button>
+                <button class="control-button primary" id="play" type="button" aria-label="Play trace" aria-pressed="false"><svg id="play-icon" aria-hidden="true" width="18" height="18" viewBox="0 0 18 18"><path d="m6 4 8 5-8 5Z" fill="currentColor"/></svg><span id="play-label">Play</span></button>
+                <button class="control-button" id="next-step" type="button" aria-label="Step forward"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18"><path d="M13 4v10M4 4l7 5-7 5Z" fill="currentColor"/></svg></button>
+                <button class="control-button" id="reset" type="button">Reset</button>
+              </div>
+              <div class="scrubber"><label for="scrub"><span>Scrub the scan</span><span id="step-description">before the first symbol</span></label><input id="scrub" type="range" min="0" max="7" value="0"></div>
+              <div class="sequence" id="sequence" aria-label="Instruction progress"><span class="token current">(</span><span class="token">(</span><span class="token">)</span><span class="token">(</span><span class="token">(</span><span class="token">)</span><span class="token">(</span></div>
+              <div class="state-tools"><button class="control-button" id="export-state" type="button">Export example</button><button class="control-button" id="import-trigger" type="button">Import example</button><input id="import-state" type="file" accept="application/json" tabindex="-1"></div>
+            </div>
+            <div class="shaft-wrap">
+              <div class="shaft-title"><h3>The elevator shaft</h3><span id="direction">READY</span></div>
+              <div class="shaft" id="shaft" aria-live="polite">
+                <div class="floor-row"><span class="floor-label">+3</span><span class="floor-track"></span></div>
+                <div class="floor-row"><span class="floor-label">+2</span><span class="floor-track"></span></div>
+                <div class="floor-row"><span class="floor-label">+1</span><span class="floor-track"></span></div>
+                <div class="floor-row active"><span class="floor-label">0</span><span class="floor-track"><span class="car">0</span></span></div>
+              </div>
+              <p class="formula" id="formula">floor = 0</p>
+            </div>
+          </div>
+          <figcaption id="figure-caption"><strong>At the start:</strong> the accumulator is 0. Press play or scrub forward to fold each symbol into it.</figcaption>
+          <noscript><p class="noscript">The static trace for (()(()( is 0, 1, 2, 1, 2, 3, 2, 3. Enable JavaScript to scrub it.</p></noscript>
+        </figure>
+      </section>
+
+      <section id="journal" aria-labelledby="journal-title">
+        <div class="section-head"><h2 id="journal-title">Journal</h2><p>The code is small. The record keeps the choice and the concept from disappearing with it.</p></div>
+        <div class="journal-grid">
+          <div class="journal-copy">
+            <h3>Why Python</h3><p>I chose Python because this level is almost pure iteration. It lets the running sum stay visible without setup code, and its standard library already has the small test runner I need. A more elaborate runtime would hide the idea rather than help it.</p>
+            <h3>First idea</h3><p>My first idea was also the implementation I kept: start at zero, consume the stream from left to right, add one for <code>(</code> and subtract one for <code>)</code>. I exposed the intermediate floors as <code>floor_trace</code>, then made <code>final_floor</code> consume that trace.</p>
+            <h3>Wrong turns</h3><p>There were no wrong turns on this level. The public examples made the mapping and initial value unambiguous, and the direct running sum worked immediately. I did add explicit rejection of unexpected characters so malformed input cannot silently produce an answer.</p>
+          </div>
+          <aside class="concept" aria-label="Algorithm concept and complexity">
+            <h3>Fold, then scan</h3><p>A fold collapses the whole instruction stream into one accumulator. A scan exposes every intermediate accumulator. The solution needs the fold; this visualisation uses the scan.</p>
+            <div class="trace" aria-label="Example trace">(()<br>0 → 1 → 2 → 1</div>
+            <div class="complexity"><div><span>Time</span><strong>O(n)</strong></div><div><span>Answer space</span><strong>O(1)</strong></div></div>
+          </aside>
+        </div>
+        <div class="synthesis"><strong>WHAT I KEEP</strong>The input is a stream, the floor is the accumulator, and every visible stop in the shaft is one state of the same fold.</div>
+      </section>
+
+      <section class="next" id="next" aria-labelledby="next-title">
+        <span class="lock" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 26 26"><rect x="5" y="11" width="16" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 11V8a5 5 0 0 1 10 0v3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+        <div><h2 id="next-title">Part 2 stays locked</h2><p>The next level opens only after this solution runs on my own Advent of Code input and Part 1 becomes solved.</p></div>
+      </section>
+      <footer>Original puzzle: <a href="https://adventofcode.com/2015/day/1">Advent of Code 2015 Day 1</a>. This page paraphrases the task and does not redistribute the puzzle text or input.</footer>
+    </main>
+  </div>
+  <button class="restore-toc" type="button" id="restore-toc" aria-label="Restore level navigation">Show sections</button>
+  <script>
+    (() => {
+      const STORAGE_KEY = 'journey-aoc.level-2015-01-1.v1';
+      const DEFAULT_INPUT = '(()(()(';
+      const figure = document.querySelector('[data-figure="running-floor"]');
+      const input = document.querySelector('#instructions');
+      const error = document.querySelector('#input-error');
+      const positionOutput = document.querySelector('#position');
+      const floorOutput = document.querySelector('#floor');
+      const scrub = document.querySelector('#scrub');
+      const sequence = document.querySelector('#sequence');
+      const shaft = document.querySelector('#shaft');
+      const formula = document.querySelector('#formula');
+      const caption = document.querySelector('#figure-caption');
+      const direction = document.querySelector('#direction');
+      const stepDescription = document.querySelector('#step-description');
+      const play = document.querySelector('#play');
+      const playLabel = document.querySelector('#play-label');
+      const playIcon = document.querySelector('#play-icon');
+      const previous = document.querySelector('#previous');
+      const next = document.querySelector('#next-step');
+      let instructions = DEFAULT_INPUT;
+      let trace = makeTrace(DEFAULT_INPUT);
+      let position = 0;
+      let timer = null;
+
+      function makeTrace(value) {
+        const values = [0];
+        for (const symbol of value) values.push(values.at(-1) + (symbol === '(' ? 1 : -1));
+        return values;
+      }
+
+      function stop() {
+        if (timer) window.clearInterval(timer);
+        timer = null;
+        play.setAttribute('aria-pressed', 'false');
+        play.setAttribute('aria-label', 'Play trace');
+        playLabel.textContent = 'Play';
+        playIcon.innerHTML = '<path d="m6 4 8 5-8 5Z" fill="currentColor"/>';
+      }
+
+      function persist() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ instructions: input.value, position }));
+      }
+
+      function describeStep() {
+        if (position === 0) return 'before the first symbol';
+        const symbol = instructions[position - 1];
+        return `symbol ${position}: ${symbol} means ${symbol === '(' ? '+1' : '-1'}`;
+      }
+
+      function render() {
+        const floor = trace[position];
+        positionOutput.textContent = `${position} / ${instructions.length}`;
+        floorOutput.textContent = String(floor);
+        scrub.max = String(instructions.length);
+        scrub.value = String(position);
+        previous.disabled = position === 0;
+        next.disabled = position === instructions.length;
+        stepDescription.textContent = describeStep();
+        direction.textContent = position === 0 ? 'READY' : instructions[position - 1] === '(' ? 'UP +1' : 'DOWN -1';
+        sequence.replaceChildren(...[...instructions].map((symbol, index) => {
+          const token = document.createElement('span');
+          token.className = `token${index < position ? ' done' : ''}${index === position ? ' current' : ''}`;
+          token.textContent = symbol;
+          return token;
+        }));
+
+        const minFloor = Math.min(0, ...trace) - 1;
+        const maxFloor = Math.max(0, ...trace) + 1;
+        const rows = [];
+        for (let level = maxFloor; level >= minFloor; level -= 1) {
+          const row = document.createElement('div');
+          row.className = `floor-row${level === floor ? ' active' : ''}`;
+          const label = document.createElement('span');
+          label.className = 'floor-label';
+          label.textContent = level > 0 ? `+${level}` : String(level);
+          const track = document.createElement('span');
+          track.className = 'floor-track';
+          if (level === floor) {
+            const car = document.createElement('span');
+            car.className = 'car';
+            car.textContent = String(floor);
+            track.append(car);
+          }
+          row.append(label, track);
+          rows.push(row);
+        }
+        shaft.replaceChildren(...rows);
+
+        const operation = position === 0 ? 'floor = 0' : `floor = ${trace[position - 1]} ${instructions[position - 1] === '(' ? '+' : '-'} 1 = ${floor}`;
+        formula.textContent = operation;
+        caption.innerHTML = position === 0
+          ? '<strong>At the start:</strong> the accumulator is 0. Press play or scrub forward to fold each symbol into it.'
+          : `<strong>After ${position} symbol${position === 1 ? '' : 's'}:</strong> the running floor is ${floor}. The final answer is simply the last stop.`;
+        figure.dataset.figureState = `input=${instructions.length};position=${position};floor=${floor}`;
+        persist();
+      }
+
+      function parseInput() {
+        stop();
+        const compact = input.value.replace(/\s/g, '');
+        const invalid = compact.match(/[^()]/);
+        input.setAttribute('aria-invalid', String(Boolean(invalid)));
+        if (invalid) {
+          error.textContent = `Remove “${invalid[0]}”. Only ( and ) are instructions.`;
+          play.disabled = true;
+          previous.disabled = true;
+          next.disabled = true;
+          return;
+        }
+        error.textContent = compact ? '' : 'The stream is empty, so the floor stays at 0.';
+        play.disabled = compact.length === 0;
+        instructions = compact;
+        trace = makeTrace(instructions);
+        position = Math.min(position, instructions.length);
+        render();
+      }
+
+      input.addEventListener('input', parseInput);
+      scrub.addEventListener('input', () => { stop(); position = Number(scrub.value); render(); });
+      previous.addEventListener('click', () => { stop(); position = Math.max(0, position - 1); render(); });
+      next.addEventListener('click', () => { stop(); position = Math.min(instructions.length, position + 1); render(); });
+      document.querySelector('#reset').addEventListener('click', () => { stop(); input.value = DEFAULT_INPUT; instructions = DEFAULT_INPUT; trace = makeTrace(instructions); position = 0; error.textContent = ''; input.setAttribute('aria-invalid', 'false'); play.disabled = false; render(); });
+      play.addEventListener('click', () => {
+        if (timer) { stop(); return; }
+        if (position === instructions.length) position = 0;
+        play.setAttribute('aria-pressed', 'true');
+        play.setAttribute('aria-label', 'Pause trace');
+        playLabel.textContent = 'Pause';
+        playIcon.innerHTML = '<path d="M5 4h3v10H5zM11 4h3v10h-3z" fill="currentColor"/>';
+        render();
+        timer = window.setInterval(() => {
+          position += 1;
+          render();
+          if (position >= instructions.length) stop();
+        }, 550);
+      });
+
+      document.querySelector('#export-state').addEventListener('click', () => {
+        const blob = new Blob([JSON.stringify({ version: 1, instructions: input.value, position }, null, 2)], { type: 'application/json' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'journey-aoc-2015-01-1-example.json';
+        link.click();
+        URL.revokeObjectURL(link.href);
+      });
+      document.querySelector('#import-trigger').addEventListener('click', () => document.querySelector('#import-state').click());
+      document.querySelector('#import-state').addEventListener('change', async event => {
+        const file = event.target.files[0];
+        if (!file) return;
+        try {
+          const state = JSON.parse(await file.text());
+          if (typeof state.instructions !== 'string' || /[^()\s]/.test(state.instructions)) throw new Error('Invalid instruction stream');
+          input.value = state.instructions;
+          position = Number.isInteger(state.position) ? Math.max(0, state.position) : 0;
+          parseInput();
+        } catch (importError) {
+          error.textContent = `Import failed: ${importError.message}.`;
+        }
+        event.target.value = '';
+      });
+
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          const state = JSON.parse(saved);
+          if (typeof state.instructions === 'string' && !/[^()\s]/.test(state.instructions)) {
+            input.value = state.instructions;
+            position = Number.isInteger(state.position) ? Math.max(0, state.position) : 0;
+          }
+        } catch (_) {}
+      }
+      parseInput();
+
+      const shell = document.querySelector('#shell');
+      const collapse = document.querySelector('#collapse-toc');
+      const restore = document.querySelector('#restore-toc');
+      collapse.addEventListener('click', () => { shell.classList.add('toc-collapsed'); collapse.setAttribute('aria-expanded', 'false'); });
+      restore.addEventListener('click', () => { shell.classList.remove('toc-collapsed'); collapse.setAttribute('aria-expanded', 'true'); });
+      const links = [...document.querySelectorAll('.rail nav a')];
+      const sections = links.map(link => document.querySelector(link.hash)).filter(Boolean);
+      const observer = new IntersectionObserver(entries => {
+        const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+        if (!visible) return;
+        links.forEach(link => link.setAttribute('aria-current', String(link.hash === `#${visible.target.id}`)));
+      }, { rootMargin: '-20% 0px -65% 0px' });
+      sections.forEach(section => observer.observe(section));
+    })();
+  </script>
+</body>
+</html>
