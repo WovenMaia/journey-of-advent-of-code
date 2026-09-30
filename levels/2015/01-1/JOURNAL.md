@@ -1,6 +1,10 @@
 # 2015 Day 1, Part 1
 
-**Status:** staged. The public examples pass, but I cannot call this solved until I can run it on my own input.
+**Status:** solved (30/09/2026). The public examples pass, and I ran the solution on my own input before submitting its result once.
+
+## Real input and submission
+
+`./solve` printed `138` for my local input. I submitted that value once. Advent of Code replied: “That's the right answer! You are one gold star closer to powering the weather machine.” Part 1 is therefore solved.
 
 The original puzzle is on [Advent of Code](https://adventofcode.com/2015/day/1). In my words: read a stream of two instruction symbols, treat one as a move up and the other as a move down, then report the final floor.
 
