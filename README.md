@@ -17,13 +17,9 @@ I start with 2015 Day 1 Part 1 and unlock exactly one level at a time. A level m
 
 2015 Day 1 Part 1 is solved in Python. Its real input remains local, and Advent of Code accepted the submitted result.
 
-2015 Day 1 Part 2 is staged in Python. Run its public examples with:
+2015 Day 1 Part 2 and 2015 Day 2 Part 1 are solved in Python. Their real inputs remain local, and Advent of Code accepted both submitted results.
 
-```sh
-python3 -m unittest discover -s levels/2015/01-2 -p 'test_*.py' -v
-```
-
-Run the solved Part 1 real input locally with:
+Run the solved Day 1 Part 1 real input locally with:
 
 ```sh
 ./solve

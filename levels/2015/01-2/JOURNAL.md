@@ -1,6 +1,10 @@
 # 2015 Day 1, Part 2
 
-**Status:** staged (30/09/2026).
+**Status:** solved (30/09/2026).
+
+## Real input and submission
+
+I ran the staged solution on my own input; it returned `1771`. I submitted that value once. Advent of Code replied: “That's the right answer! You are one gold star closer to powering the weather machine.” Part 2 is therefore solved.
 
 ## Why it is available now
 
@@ -14,6 +18,6 @@ I will keep the same running floor, but stop immediately when it first reaches t
 
 The site shows that `)` enters the basement at position `1`, while `()())` does so at position `5`. The tests also cover an instruction stream that never reaches the basement and malformed input.
 
-## Submission boundary
+## Completion
 
-The implementation and public examples are staged, but I have not run Part 2 on my real input or submitted an answer. Its status stays **staged** until both happen.
+The public examples, real-input run, and accepted one-time submission now all agree: this level is solved.
