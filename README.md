@@ -15,7 +15,7 @@ I start with 2015 Day 1 Part 1 and unlock exactly one level at a time. A level m
 
 ## Current level
 
-2015 Day 1 through Day 3 are complete in Python. Day 4 is complete in Python. Day 5 Parts 1 and 2 are solved in Python. Day 6 Parts 1 and 2 are solved in Python. Day 7 Parts 1 and 2 are solved in Python. Day 8 Parts 1 and 2 are solved in Python. Day 9 Part 1 is solved in Python. All seventeen real-input results remain local, and Advent of Code accepted each submitted answer. Day 9 Part 2 is next.
+2015 Day 1 through Day 3 are complete in Python. Day 4 is complete in Python. Day 5 Parts 1 and 2 are solved in Python. Day 6 Parts 1 and 2 are solved in Python. Day 7 Parts 1 and 2 are solved in Python. Day 8 Parts 1 and 2 are solved in Python. Day 9 Parts 1 and 2 are solved in Python. All eighteen real-input results remain local, and Advent of Code accepted each submitted answer. Day 10 Part 1 is next.
 
 Run the solved Day 1 Part 1 real input locally with:
 
