@@ -17,10 +17,10 @@ I start with 2015 Day 1 Part 1 and unlock exactly one level at a time. A level m
 
 | Year | Stars | Days solved | Languages |
 | --- | ---: | ---: | --- |
-| 2016 | 27 | 13 | Python |
+| 2016 | 29 | 14 | Python |
 | 2015 | 50 | 25 | Python |
 
-**Current level:** 2016 Day 14 Part 2.
+**Current level:** 2016 Day 15 Part 1.
 
 Run the current level's real input locally with:
 
