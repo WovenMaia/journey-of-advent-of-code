@@ -5,7 +5,7 @@ from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parent
-LEVEL_DIR = ROOT / "levels" / "2016" / "02-1"
+LEVEL_DIR = ROOT / "levels" / "2016" / "02-2"
 sys.path.insert(0, str(LEVEL_DIR))
 
 from solution import code  # noqa: E402
