@@ -5,12 +5,12 @@ from pathlib import Path
 import sys
 
 ROOT = Path(__file__).resolve().parent
-LEVEL_DIR = ROOT / "levels" / "2016" / "10-2"
+LEVEL_DIR = ROOT / "levels" / "2016" / "11-2"
 sys.path.insert(0, str(LEVEL_DIR))
 
-from solution import output_product  # noqa: E402
+from solution import minimum_steps  # noqa: E402
 
-DEFAULT_INPUT = ROOT / "inputs" / "2016" / "10.txt"
+DEFAULT_INPUT = ROOT / "inputs" / "2016" / "11.txt"
 
 
 def main() -> int:
@@ -23,7 +23,7 @@ def main() -> int:
         return 0
 
     try:
-        answer = output_product(input_path.read_text(encoding="utf-8"))
+        answer = minimum_steps(input_path.read_text(encoding="utf-8"))
     except ValueError as error:
         print(f"Invalid input: {error}", file=sys.stderr)
         return 2
