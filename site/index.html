@@ -251,7 +251,7 @@
                 <article class="day current"><span class="day-number">DAY 13</span><span class="day-note">both parts solved</span><div class="parts"><a class="part solved" href="levels/2016/13-1/index.html" aria-label="Open 2016 Day 13 Part 1, solved">1</a><a class="part solved" href="levels/2016/13-2/index.html" aria-label="Open 2016 Day 13 Part 2, solved">2</a></div></article>
                 <article class="day current"><span class="day-number">DAY 14</span><span class="day-note">both parts solved</span><div class="parts"><a class="part solved" href="levels/2016/14-1/index.html" aria-label="Open 2016 Day 14 Part 1, solved">1</a><a class="part solved" href="levels/2016/14-2/index.html" aria-label="Open 2016 Day 14 Part 2, solved">2</a></div></article>
                 <article class="day current"><span class="day-number">DAY 15</span><span class="day-note">both parts solved</span><div class="parts"><a class="part solved" href="levels/2016/15-1/index.html" aria-label="Open 2016 Day 15 Part 1, solved">1</a><a class="part solved" href="levels/2016/15-2/index.html" aria-label="Open 2016 Day 15 Part 2, solved">2</a></div></article>
-                <article class="day current"><span class="day-number">DAY 16</span><span class="day-note">next</span><div class="parts"><a class="part solved" href="levels/2016/16-1/index.html" aria-label="Open 2016 Day 16 Part 1, solved">1</a><span class="part" aria-label="2016 Day 16 Part 2, next">2</span></div></article>
+                <article class="day current"><span class="day-number">DAY 16</span><span class="day-note">both parts solved</span><div class="parts"><a class="part solved" href="levels/2016/16-1/index.html" aria-label="Open 2016 Day 16 Part 1, solved">1</a><a class="part solved" href="levels/2016/16-2/index.html" aria-label="Open 2016 Day 16 Part 2, solved">2</a></div></article>
                 <article class="day"><span class="day-number">DAY 17</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 17 Part 1, locked">1</span><span class="part" aria-label="2016 Day 17 Part 2, locked">2</span></div></article>
                 <article class="day"><span class="day-number">DAY 18</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 18 Part 1, locked">1</span><span class="part" aria-label="2016 Day 18 Part 2, locked">2</span></div></article>
                 <article class="day"><span class="day-number">DAY 19</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 19 Part 1, locked">1</span><span class="part" aria-label="2016 Day 19 Part 2, locked">2</span></div></article>
@@ -291,6 +291,14 @@
       restore.addEventListener('click', () => setCollapsed(false));
       const observer = new IntersectionObserver(entries => { const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0]; if (!visible) return; links.forEach(link => link.setAttribute('aria-current', String(link.hash === `#${visible.target.id}`))); }, { rootMargin: '-20% 0px -65% 0px' });
       sections.forEach(section => observer.observe(section));
+    })();
+  </script>
+  <script>
+    (() => {
+      const latest = [...document.querySelectorAll('a.part.solved')].filter(link => link.getAttribute('href')?.includes('/2016/')).pop();
+      const marker = document.querySelector('.trail-mark text');
+      const match = latest?.getAttribute('href')?.match(/levels\/2016\/(\d{2}-\d)\/index\.html$/);
+      if (marker && match) marker.textContent = match[1];
     })();
   </script>
 </body>
