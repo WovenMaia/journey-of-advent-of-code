@@ -17,7 +17,7 @@ def main() -> int:
     input_path = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_INPUT
     if not input_path.is_file():
         print(
-            "Input pending: add inputs/2016/02.txt after Advent of Code access "
+            "Input pending: add inputs/2016/04.txt after Advent of Code access "
             "is available."
         )
         return 0
