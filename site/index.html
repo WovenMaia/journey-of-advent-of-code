@@ -144,6 +144,16 @@
       display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--s3);
       padding: var(--s4); border-radius: var(--r3); background: oklch(0.94 0.02 294);
     }
+.year-stack { display: grid; gap: var(--s5); }
+.year-stack details { border-radius: var(--r3); background: var(--panel); box-shadow: var(--shadow); overflow: clip; }
+.year-stack summary { display: flex; align-items: center; justify-content: space-between; gap: var(--s5); min-height: 76px; padding: var(--s5) var(--s6); cursor: pointer; list-style: none; }
+.year-stack summary::-webkit-details-marker { display: none; }
+.year-stack summary::after { content: "+"; color: var(--subject); font: 700 24px/1 var(--mono); }
+.year-stack details[open] summary::after { content: "−"; }
+.year-stack summary h3 { font-size: 25px; }
+.year-stack summary p { margin: var(--s2) 0 0; color: var(--dim); }
+.year-stack .year-body { padding: 0 var(--s6) var(--s6); }
+.year-stack .year-body .calendar { margin-top: var(--s4); }
     .day {
       min-width: 0; min-height: 116px; padding: var(--s4); border-radius: var(--r2); background: var(--panel);
       display: flex; flex-direction: column; justify-content: space-between; gap: var(--s3);
@@ -204,90 +214,67 @@
 <body>
   <header class="topbar">
     <a class="wordmark" href="#top">Journey of Advent of Code</a>
-    <span class="edition">2015 / level 50</span>
+    <span class="edition">2016 / level 2</span>
   </header>
   <div class="shell" id="shell">
     <aside class="rail" aria-label="Journey navigation">
-      <div class="rail-head">
-        <span class="rail-title">THE ROUTE</span>
-        <button class="rail-toggle" type="button" id="collapse-toc" aria-label="Collapse journey navigation" aria-expanded="true">
-          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18"><path d="M11.5 4 6.5 9l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
-      </div>
-      <nav>
-        <a href="#top" aria-current="true">Threshold</a>
-        <a href="#calendar">2015 map</a>
-        <a href="#method">Journey rules</a>
-      </nav>
+      <div class="rail-head"><span class="rail-title">THE ROUTE</span><button class="rail-toggle" type="button" id="collapse-toc" aria-label="Collapse journey navigation" aria-expanded="true"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 18 18"><path d="M11.5 4 6.5 9l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+      <nav><a href="#top" aria-current="true">Threshold</a><a href="#years">Years</a><a href="#method">Journey rules</a></nav>
     </aside>
     <main id="top">
-      <nav class="inline-jumps" aria-label="Page sections">
-        <a href="#top">Threshold</a><a href="#calendar">2015 map</a><a href="#method">Rules</a>
-      </nav>
+      <nav class="inline-jumps" aria-label="Page sections"><a href="#top">Threshold</a><a href="#years">Years</a><a href="#method">Rules</a></nav>
       <section class="hero" aria-labelledby="page-title">
-        <div class="hero-copy">
-          <h1 id="page-title">A map of learning, one door at a time.</h1>
-          <p>I am solving every Advent of Code level in order, preserving the thought process beside the code.</p>
-        </div>
-        <div class="trail-mark" aria-label="A path reaches all fifty solved levels">
-          <svg viewBox="0 0 256 190" role="img" aria-labelledby="route-title route-desc">
-            <title id="route-title">The journey is complete</title>
-            <desc id="route-desc">A green route reaches all fifty solved levels.</desc>
-            <path d="M28 158 C70 158 62 100 109 100 S144 45 187 45 S214 22 230 19" fill="none" stroke="oklch(0.7 0.12 150)" stroke-width="5" stroke-linecap="round"/>
-            <circle cx="28" cy="158" r="9" fill="oklch(0.98 0.008 294)"/>
-            <circle cx="187" cy="45" r="13" fill="oklch(0.68 0.12 150)" stroke="oklch(0.98 0.008 294)" stroke-width="4"/>
-            <text x="152" y="77" fill="oklch(0.98 0.008 294)" font-family="ui-monospace, monospace" font-size="12">12-2</text>
-            <text x="202" y="20" fill="oklch(0.98 0.008 294)" font-family="ui-monospace, monospace" font-size="12">25-2</text>
-          </svg>
+        <div class="hero-copy"><h1 id="page-title">A map of learning, one door at a time.</h1><p>I am solving every Advent of Code level in order, preserving the thought process beside the code.</p></div>
+        <div class="trail-mark" aria-label="A path reaches the first two solved levels of 2016"><svg viewBox="0 0 256 190" role="img" aria-labelledby="route-title route-desc"><title id="route-title">The journey continues into 2016</title><desc id="route-desc">A green route reaches two solved levels.</desc><path d="M28 158 C70 158 62 100 109 100 S144 45 187 45" fill="none" stroke="oklch(0.7 0.12 150)" stroke-width="5" stroke-linecap="round"/><circle cx="28" cy="158" r="9" fill="oklch(0.98 0.008 294)"/><circle cx="187" cy="45" r="13" fill="oklch(0.68 0.12 150)" stroke="oklch(0.98 0.008 294)" stroke-width="4"/><text x="152" y="77" fill="oklch(0.98 0.008 294)" font-family="ui-monospace, monospace" font-size="12">01-2</text></svg></div>
+      </section>
+      <div class="summary" aria-label="Current journey summary"><p><strong>2016 Day 1 is complete.</strong> Two stars are solved in the new year; the finished 2015 calendar remains available below.</p><span class="status">52 SOLVED</span></div>
+      <section id="years" aria-labelledby="years-title">
+        <div class="section-head"><h2 id="years-title">The years</h2><p>New work stays open at the top. Finished years collapse to a summary row.</p></div>
+        <ul class="legend" aria-label="Level status legend"><li><span class="key"></span>Locked</li><li><span class="key staged"></span>Staged</li><li><span class="key solved"></span>Solved</li></ul>
+        <div class="year-stack">
+          <details id="y2016" open>
+            <summary><div><h3>2016 · 2 stars</h3><p>Day 1 complete in Python; Day 2 is next.</p></div><span class="status">OPEN</span></summary>
+            <div class="year-body">
+              <div class="calendar" aria-label="Advent of Code 2016 levels">
+                <article class="day current"><span class="day-number">DAY 01</span><span class="day-note">both parts solved</span><div class="parts"><a class="part solved" href="levels/2016/01-1/index.html" aria-label="Open 2016 Day 1 Part 1, solved">1</a><a class="part solved" href="levels/2016/01-2/index.html" aria-label="Open 2016 Day 1 Part 2, solved">2</a></div></article>
+                <article class="day"><span class="day-number">DAY 02</span><span class="day-note">next level</span><div class="parts"><span class="part staged" aria-label="2016 Day 2 Part 1, staged">1</span><span class="part" aria-label="2016 Day 2 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 03</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 3 Part 1, locked">1</span><span class="part" aria-label="2016 Day 3 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 04</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 4 Part 1, locked">1</span><span class="part" aria-label="2016 Day 4 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 05</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 5 Part 1, locked">1</span><span class="part" aria-label="2016 Day 5 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 06</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 6 Part 1, locked">1</span><span class="part" aria-label="2016 Day 6 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 07</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 7 Part 1, locked">1</span><span class="part" aria-label="2016 Day 7 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 08</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 8 Part 1, locked">1</span><span class="part" aria-label="2016 Day 8 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 09</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 9 Part 1, locked">1</span><span class="part" aria-label="2016 Day 9 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 10</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 10 Part 1, locked">1</span><span class="part" aria-label="2016 Day 10 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 11</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 11 Part 1, locked">1</span><span class="part" aria-label="2016 Day 11 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 12</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 12 Part 1, locked">1</span><span class="part" aria-label="2016 Day 12 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 13</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 13 Part 1, locked">1</span><span class="part" aria-label="2016 Day 13 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 14</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 14 Part 1, locked">1</span><span class="part" aria-label="2016 Day 14 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 15</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 15 Part 1, locked">1</span><span class="part" aria-label="2016 Day 15 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 16</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 16 Part 1, locked">1</span><span class="part" aria-label="2016 Day 16 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 17</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 17 Part 1, locked">1</span><span class="part" aria-label="2016 Day 17 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 18</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 18 Part 1, locked">1</span><span class="part" aria-label="2016 Day 18 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 19</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 19 Part 1, locked">1</span><span class="part" aria-label="2016 Day 19 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 20</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 20 Part 1, locked">1</span><span class="part" aria-label="2016 Day 20 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 21</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 21 Part 1, locked">1</span><span class="part" aria-label="2016 Day 21 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 22</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 22 Part 1, locked">1</span><span class="part" aria-label="2016 Day 22 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 23</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 23 Part 1, locked">1</span><span class="part" aria-label="2016 Day 23 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 24</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 24 Part 1, locked">1</span><span class="part" aria-label="2016 Day 24 Part 2, locked">2</span></div></article>
+                <article class="day"><span class="day-number">DAY 25</span><span class="day-note">locked</span><div class="parts"><span class="part" aria-label="2016 Day 25 Part 1, locked">1</span><span class="part" aria-label="2016 Day 25 Part 2, locked">2</span></div></article>
+              </div>
+              <div class="synthesis"><strong>THE MAP SAYS</strong>Two stars are solved. The next door is 2016 Day 2 Part 1.</div>
+            </div>
+          </details>
+          <details id="y2015">
+            <summary><div><h3>2015 · 50 stars</h3><p>The first year is complete and ready to revisit.</p></div><span class="status">COLLAPSED</span></summary>
+            <div class="year-body"><div class="calendar" aria-label="Advent of Code 2015 levels">
+              <article class="day"><span class="day-number">DAY 01</span><span class="day-note">both parts solved</span><div class="parts"><a class="part solved" href="levels/2015/01-1/index.html" aria-label="Open Day 1 Part 1, solved">1</a><span class="part solved">2</span></div></article>
+              <article class="day"><span class="day-number">DAY 02</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 03</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 04</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 05</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 06</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 07</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 08</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 09</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 10</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 11</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 12</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 13</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 14</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 15</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 16</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 17</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 18</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 19</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 20</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 21</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 22</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 23</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 24</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article><article class="day"><span class="day-number">DAY 25</span><span class="day-note">journey complete</span><div class="parts"><span class="part solved">1</span><span class="part solved">2</span></div></article>
+            </div><div class="synthesis"><strong>THE MAP SAYS</strong>Fifty levels are solved and none remain locked.</div></div>
+          </details>
         </div>
       </section>
-      <div class="summary" aria-label="Current journey summary">
-        <p><strong>Day 25 Part 2 is granted.</strong> Advent of Code accepted the forty-ninth submitted result and awarded the fiftieth star. The 2015 journey is complete.</p>
-        <span class="status">50 SOLVED</span>
-      <section id="calendar" aria-labelledby="calendar-title">
-        <div class="section-head">
-          <h2 id="calendar-title">The 2015 calendar</h2>
-          <p>Green marks a solved level; gray stays locked until its turn.</p>
-        </div>
-        <ul class="legend" aria-label="Level status legend">
-          <li><span class="key"></span>Locked</li>
-          <li><span class="key staged"></span>Staged</li>
-          <li><span class="key solved"></span>Solved</li>
-        </ul>
-        <div class="calendar" aria-label="Advent of Code 2015 levels">
-          <article class="day"><span class="day-number">DAY 01</span><span class="day-note">both parts solved</span><div class="parts"><a class="part solved" href="levels/2015/01-1/index.html" aria-label="Open Day 1 Part 1, solved">1</a><span class="part solved" aria-label="Day 1 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 02</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 2 Part 1, solved">1</span><span class="part solved" aria-label="Day 2 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 03</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 3 Part 1, solved">1</span><span class="part solved" aria-label="Day 3 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 04</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 4 Part 1, solved">1</span><span class="part solved" aria-label="Day 4 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 05</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 5 Part 1, solved">1</span><span class="part solved" aria-label="Day 5 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 06</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 6 Part 1, solved">1</span><span class="part solved" aria-label="Day 6 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 07</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 7 Part 1, solved">1</span><span class="part solved" aria-label="Day 7 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 08</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 8 Part 1, solved">1</span><span class="part solved" aria-label="Day 8 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 09</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 9 Part 1, solved">1</span><span class="part solved" aria-label="Day 9 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 10</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 10 Part 1, solved">1</span><span class="part solved" aria-label="Day 10 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 11</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 11 Part 1, solved">1</span><span class="part solved" aria-label="Day 11 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 12</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 12 Part 1, solved">1</span><span class="part solved" aria-label="Day 12 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 13</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 13 Part 1, solved">1</span><span class="part solved" aria-label="Day 13 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 14</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 14 Part 1, solved">1</span><span class="part solved" aria-label="Day 14 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 15</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 15 Part 1, solved">1</span><span class="part solved" aria-label="Day 15 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 16</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 16 Part 1, solved">1</span><span class="part solved" aria-label="Day 16 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 17</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 17 Part 1, solved">1</span><span class="part solved" aria-label="Day 17 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 18</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 18 Part 1, solved">1</span><span class="part solved" aria-label="Day 18 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 19</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 19 Part 1, solved">1</span><span class="part solved" aria-label="Day 19 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 20</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 20 Part 1, solved">1</span><span class="part solved" aria-label="Day 20 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 21</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 21 Part 1, solved">1</span><span class="part solved" aria-label="Day 21 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 22</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 22 Part 1, solved">1</span><span class="part solved" aria-label="Day 22 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 23</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 23 Part 1, solved">1</span><span class="part solved" aria-label="Day 23 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 24</span><span class="day-note">both parts solved</span><div class="parts"><span class="part solved" aria-label="Day 24 Part 1, solved">1</span><span class="part solved" aria-label="Day 24 Part 2, solved">2</span></div></article>
-          <article class="day"><span class="day-number">DAY 25</span><span class="day-note">journey complete</span><div class="parts"><span class="part solved" aria-label="Day 25 Part 1, solved">1</span><span class="part solved" aria-label="Day 25 Part 2, granted">2</span></div></article>
-        </div>
-        <div class="synthesis"><strong>THE MAP SAYS</strong>Fifty levels are solved and none remain locked.</div>
-      </section>
-
-      <section class="method" id="method" aria-labelledby="method-title">
-        <div><h2 id="method-title">The route has rules</h2><p>Order matters more than speed. Every level gets the language that best exposes its central idea, a first-person journal, public-example tests, and a visual explanation that can be touched rather than merely read.</p></div>
-        <ul class="rule-list"><li>One level at a time</li><li>Reasoning beside code</li><li>No redistributed puzzle text</li><li>No committed inputs</li></ul>
-      </section>
+      <section class="method" id="method" aria-labelledby="method-title"><div><h2 id="method-title">The route has rules</h2><p>Order matters more than speed. Every level gets the language that best exposes its central idea, a first-person journal, public-example tests, and a visual explanation that can be touched rather than merely read.</p></div><ul class="rule-list"><li>One level at a time</li><li>Reasoning beside code</li><li>No redistributed puzzle text</li><li>No committed inputs</li></ul></section>
       <footer>Built locally by Maïa. The next door opens only after this one is solved.</footer>
     </main>
   </div>
@@ -299,19 +286,10 @@
       const restore = document.querySelector('#restore-toc');
       const links = [...document.querySelectorAll('.rail nav a')];
       const sections = links.map(link => document.querySelector(link.hash)).filter(Boolean);
-
-      function setCollapsed(collapsed) {
-        shell.classList.toggle('toc-collapsed', collapsed);
-        collapse.setAttribute('aria-expanded', String(!collapsed));
-      }
+      function setCollapsed(collapsed) { shell.classList.toggle('toc-collapsed', collapsed); collapse.setAttribute('aria-expanded', String(!collapsed)); }
       collapse.addEventListener('click', () => setCollapsed(true));
       restore.addEventListener('click', () => setCollapsed(false));
-
-      const observer = new IntersectionObserver(entries => {
-        const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-        if (!visible) return;
-        links.forEach(link => link.setAttribute('aria-current', String(link.hash === `#${visible.target.id}`)));
-      }, { rootMargin: '-20% 0px -65% 0px' });
+      const observer = new IntersectionObserver(entries => { const visible = entries.filter(entry => entry.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0]; if (!visible) return; links.forEach(link => link.setAttribute('aria-current', String(link.hash === `#${visible.target.id}`))); }, { rootMargin: '-20% 0px -65% 0px' });
       sections.forEach(section => observer.observe(section));
     })();
   </script>

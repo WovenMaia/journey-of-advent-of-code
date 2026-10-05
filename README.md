@@ -13,9 +13,14 @@ I start with 2015 Day 1 Part 1 and unlock exactly one level at a time. A level m
 - Keep the wrong turns as honestly as the successful idea. If there were none, say so.
 - Choose the language that makes the level clearest, not one language for the whole journey.
 
-## Current level
+## Progress by year
 
-2015 Day 1 through Day 3 are complete in Python. Day 4 is complete in Python. Day 5 Parts 1 and 2 are solved in Python. Day 6 Parts 1 and 2 are solved in Python. Day 7 Parts 1 and 2 are solved in Python. Day 8 Parts 1 and 2 are solved in Python. Day 9 Parts 1 and 2 are solved in Python. Day 10 Parts 1 and 2 are solved in Python. Day 11 Parts 1 and 2 are solved in Python. Day 12 Parts 1 and 2 are solved in Python. Day 13 Parts 1 and 2 are solved in Python. Day 14 Parts 1 and 2 are solved in Python. Day 15 Parts 1 and 2 are solved in Python. Day 16 Parts 1 and 2 are solved in Python. Day 17 Parts 1 and 2 are solved in Python. Day 18 Parts 1 and 2 are solved in Python. Day 19 Parts 1 and 2 are solved in Python. Day 20 Parts 1 and 2 are solved in Python. Day 21 Parts 1 and 2 are solved in Python. Day 22 Parts 1 and 2 are solved in Python. Day 23 Parts 1 and 2 are solved in Python. Day 24 Parts 1 and 2 are solved in Python. Day 25 Part 1 is solved in Python and Part 2 was granted automatically. All forty-nine submitted real-input results remain local, and Advent of Code accepted each submitted answer. The 2015 journey is complete.
+| Year | Stars | Days solved | Languages |
+| --- | ---: | ---: | --- |
+| 2016 | 2 | 1 | Python |
+| 2015 | 50 | 25 | Python |
+
+**Current level:** 2016 Day 2 Part 1.
 
 Run the solved Day 1 Part 1 real input locally with:
 
